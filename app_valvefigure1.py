@@ -25,20 +25,6 @@ if 'client_name' not in st.session_state:
     st.session_state.client_name = ""
 if 'proposal_items' not in st.session_state:
     st.session_state.proposal_items = []
-    
-# Load default logo
-if 'logo_bytes' not in st.session_state:
-    try:
-        with open("logo.png", "rb") as f:
-            st.session_state.logo_bytes = f.read()
-    except FileNotFoundError:
-        # If logo.png doesn't exist, create a placeholder
-        img = Image.new('RGB', (300, 100), color=(73, 109, 137))
-        draw = ImageDraw.Draw(img)
-        draw.text((10, 10), "VASTAŞ Valve Solutions", fill=(255, 255, 255))
-        img_bytes = BytesIO()
-        img.save(img_bytes, format='PNG')
-        st.session_state.logo_bytes = img_bytes.getvalue()
 
 # ========================
 # MATERIAL DATABASE
@@ -352,9 +338,13 @@ def main():
     # Sidebar - Logo and Actions
     with st.sidebar:
         st.title("VASTAŞ Valve Configurator")
+        logo_upload = st.file_uploader("Upload Company Logo", type=["png", "jpg", "jpeg"])
         
-        # Display company logo
-        st.image(st.session_state.logo_bytes, caption="Company Logo", use_column_width=True)
+        if logo_upload is not None:
+            st.session_state.logo_bytes = logo_upload.getvalue()
+            st.image(st.session_state.logo_bytes, caption="Your Logo", use_column_width=True)
+        else:
+            st.image("https://via.placeholder.com/300x100?text=VASTAŞ+Logo", caption="Default Logo", use_column_width=True)
             
         st.divider()
         st.subheader("Actions")
